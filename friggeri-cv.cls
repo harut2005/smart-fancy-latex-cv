@@ -102,6 +102,7 @@ BoldItalicFont=texgyreheros-bolditalic.otf
 %%%%%%%%%%
 
 \RequirePackage{tikz}
+\usetikzlibrary{shapes.geometric}
 
 \newcommand{\rolefont}{%
   \fontsize{14pt}{24pt}\selectfont%
@@ -131,8 +132,8 @@ BoldItalicFont=texgyreheros-bolditalic.otf
 %%%%%%%%%%%%%
 \RequirePackage{parskip}
 
-%\newcounter{colorCounter}
-%\def\@sectioncolor#1#2#3{%
+% \newcounter{colorCounter}
+% \def\@sectioncolor#1#2#3{%
 %  {%
 %    \color{%
 %      \ifcase\value{colorCounter}%
@@ -145,29 +146,33 @@ BoldItalicFont=texgyreheros-bolditalic.otf
 %    } #1#2#3%
 %  }%
 %  \stepcounter{colorCounter}%
-%}
+% }
 
-\newcounter{colorCounter}
-\def\@sectioncolor#1#2#3{%
-  {%
-    \color{%
-      \ifcase\value{colorCounter}%
-        pblue\or%
-        pblue\or%
-        pblue\or%
-        pblue\or%
-        pblue\else%
-        pblue\fi%
-    } #1#2#3%
-  }%
-  \stepcounter{colorCounter}%
-}
+% \newcounter{colorCounter}
+% \def\@sectioncolor#1#2#3{%
+%   {%
+%     \color{%
+%       \ifcase\value{colorCounter}%
+%         pblue\or%
+%         pblue\or%
+%         pblue\or%
+%         pblue\or%
+%         pblue\else%
+%         pblue\fi%
+%     } #1#2#3%
+%   }%
+%   \stepcounter{colorCounter}%
+% }
 
+%%%%%%%%%%%%%%%%%%%%
+% List Titles %
+%%%%%%%%%%%%%%%%%%%%
 \renewcommand{\section}[1]{
   \par\vspace{\parskip}
   {%
     \LARGE\headingfont\color{headercolor}%
-    \@sectioncolor #1%
+    % \@sectioncolor
+    #1%
   }
   \par\vspace{\parskip}
 }
@@ -193,7 +198,7 @@ BoldItalicFont=texgyreheros-bolditalic.otf
 }
 \renewcommand{\bfseries}{\headingfont\color{headercolor}}
 \newcommand{\entry}[4]{%
-  #1&\parbox[t]{11.8cm}{%
+  #1&\parbox[t]{12.3cm}{%
     \textbf{#2}%
     \hfill%
     {\footnotesize\addfontfeature{Color=pblue} #3}\\%
@@ -206,14 +211,14 @@ BoldItalicFont=texgyreheros-bolditalic.otf
 %%%%%%%%%%%%%%
 
 \RequirePackage[absolute,overlay]{textpos}
-\setlength{\TPHorizModule}{1cm}
+\setlength{\TPHorizModule}{1.25cm}
 \setlength{\TPVertModule}{1cm}
 \newenvironment{aside}{%
   \let\oldsection\section
   \renewcommand{\section}[1]{
-    \par\vspace{\baselineskip}{\Large\headingfont\color{pblue} ##1}
+    \par\vspace{\baselineskip}{\Large\headingfont\color{materialblue} ##1}
   }
-  \begin{textblock}{3.6}(2.0, 0.55)
+  \begin{textblock}{3.6}(0.35, 0.55)
   \begin{flushright}
   \obeycr
 }{%
@@ -221,6 +226,66 @@ BoldItalicFont=texgyreheros-bolditalic.otf
   \end{flushright}
   \end{textblock}
   \let\section\oldsection
+}
+
+% \RequirePackage{stringstrings}
+\RequirePackage{calc,fontspec,graphicx}
+\newcommand\skillspie[2]{
+  \vspace{0.125cm}
+  \begin{tikzpicture}[font=\sffamily\bfseries\large,
+    text=white,
+    border/.style={line width=10mm}]
+    \foreach \elementcolor/\elementname/\elementsize in
+        {#1}{
+          \node[line width=0.5mm, draw, circle, minimum width=1.85cm, white, fill=\elementcolor] {\resizebox{0.5mm*\elementsize}{!}{\elementname}};
+        }
+    \foreach \angle/\elementcolor/\elementname/\elementsize [remember=\angle as \last (initially 0)] in
+        {#2}{
+            \draw[\elementcolor, border] (\last:1.45cm)
+                 arc[start angle=\last, end angle=\angle, radius=1.45cm];
+            \draw[white, line width=0.5mm] (\last:0.9)--++(\last:1.1);
+            \node at ({\angle-(0.53*(\angle-\last))}:1.42cm)
+            % {\name};
+            {\resizebox{0.5mm*\elementsize}{!}{\elementname}};
+            % {\fontsize{\extract{\angle-\last}\relax}{18}\name};
+            % {\resizebox{1.67915cm-(0.07955mm*(\angle-\last)*1*(1))}{!}{\name}};
+    }
+    % \node at (60:2cm) {#2};
+    % \node at (108:2cm) {#3};
+    % \node at (143:2cm) {#4};
+    % \node[text width=1cm, align=center, font=\sffamily\bfseries\small] at (185:2cm)
+    %     {#5};
+    % \node at (240:2cm) {#6};
+    % \node at (295:2cm) {#7};
+\end{tikzpicture}
+}
+\newcommand\skillspyramid[5]{
+  \vspace{0.125cm}
+  % Gradations
+  \begin{tikzpicture}[xshift=5cm,font=\bfseries\footnotesize,
+    text=white!90!gray]
+  \foreach \y/\A [count=\xi starting from 0, evaluate=\y as \nexty using (\y+0.6, evaluate=\xi as \grad using int(\xi*20), evaluate=\grad as \lastgrad using (\grad+10)] in {#5} {%
+      \begin{scope}[on background layer]
+      \clip[preaction={draw}] (-1.9,0) -- (1.9,0) -- (0,#2) -- cycle;
+      \fill[#4!\grad!#3] (-2,\y) rectangle (2,\nexty);
+      \fill[#4!\lastgrad!#3] (-1,1.8) rectangle (1,3.05);
+      \end{scope}
+      \node at (0,\y+.18) {\A};
+  }
+  \end{tikzpicture}
+}
+
+% starlevels %
+\newcommand\starlevel[2]{
+\pgfmathsetmacro\pgfxa{#1+1}
+\tikzstyle{scorestars}=[star, star points=5, star point ratio=2.25, inner sep=1.3pt, anchor=outer point 3]
+  \begin{tikzpicture}[baseline]
+    \foreach \i in {1,...,#2} {
+    \pgfmathparse{(\i<=#1?"materialblue":"lightgray")}
+    \edef\starcolor{\pgfmathresult}
+    \draw (\i*1.82ex,0) node[name=star\i,scorestars,fill=\starcolor]  {};
+   }
+  \end{tikzpicture}
 }
 
 %%%%%%%%%%%%%%%%
@@ -336,5 +401,5 @@ BoldItalicFont=texgyreheros-bolditalic.otf
 % Other tweaks %
 %%%%%%%%%%%%%%%%
 
-\RequirePackage[left=6.1cm,top=2cm,right=1.5cm,bottom=2.5cm,nohead,nofoot]{geometry}
+\RequirePackage[left=5.35cm,top=2cm,right=1.5cm,bottom=1.5cm,nohead,nofoot]{geometry}
 \RequirePackage{hyperref}
