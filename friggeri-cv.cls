@@ -228,6 +228,22 @@ BoldItalicFont=texgyreheros-bolditalic.otf
   \let\section\oldsection
 }
 
+\newcommand\phonenum[1]{
+  \raisebox{-.05\height}{\includegraphics[width=0.27cm]{img/phone.png}}#1
+}
+
+\newcommand\gmaillink[1]{
+  \href{mailto:#1@gmail.com}{#1@G\includegraphics[width=0.25cm]{img/gmail.png}ail}
+}
+
+\newcommand\xinglink[1]{
+  \href{#1}{\raisebox{-.05\height}{\includegraphics[height=\baselineskip]{img/xing.png}}ing}
+}
+
+\newcommand\linkedinlink[1]{
+  \href{#1}{L\raisebox{-.05\height}{\includegraphics[height=\baselineskip]{img/linkedIn.png}}kedIn}
+}
+
 % \RequirePackage{stringstrings}
 \RequirePackage{calc,fontspec,graphicx}
 \newcommand\skillspie[2]{
